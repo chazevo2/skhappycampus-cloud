@@ -1,0 +1,53 @@
+If you have GParted open, close it. Its Swapoff feature does not appear to to be permanent.
+ 
+Open terminal and become root (su); if you have sudo enabled, you may also do for example sudo -i; see man sudo for all options):
+sudo -i
+ 
+Check if swap is on
+cat /proc/swaps
+ 
+Turn off the particular swap partition and / or all of the swaps:
+swapoff --all
+ 
+Make 100% sure the particular swap partition partition is off:
+cat /proc/swaps
+ 
+Open a text editor you are skilled in with this file, e.g. nano if unsure:
+nano /etc/fstab
+ 
+Comment out / remove the swap partition's UUID, e.g.:
+# UUID=1d3c29bb-d730-4ad0-a659-45b25f60c37d    none    swap    sw    0    0
+ 
+Open a text editor you are skilled in with this file, e.g. nano if unsure:
+nano /etc/initramfs-tools/conf.d/resume
+ 
+Comment out / remove the previously identified swap partition's UUID, e.g.:
+# RESUME=UUID=1d3c29bb-d730-4ad0-a659-45b25f60c37d
+ 
+Don't close the terminal as you will need it later anyway.
+ 
+Note: The next steps differ depending on, whether you rely on CLI or GUI.
+ 
+GUI:
+ 
+Open up GParted, either from menu, or more conveniently from the terminal we have opened:
+gparted
+ 
+If you don't have it installed, you may do so; afterwards run the previous command again:
+apt-get install gparted
+ 
+Choose your drive from top-right menu.
+ 
+As the GParted reactivates the swap partition upon launch, you will have to right-click the particular swap partition and click Swapoff -> This will be applied immediately.
+ 
+Delete the swap partition with right click -> Delete. You must apply the change now.
+ 
+Resize your main / other partition with right click -> Resize/Move. You must apply the change now.
+ 
+Back to the terminal, let's recreate the boot images:
+update-initramfs -u -k all
+ 
+Update GRUB:
+update-grub
+ 
+You may reboot now if you wish to test that the machine boots up.
