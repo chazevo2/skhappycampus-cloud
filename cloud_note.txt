@@ -1,0 +1,203 @@
+VM - Virtualization Layer(Hyper visor) - CPU, Memory, I/O Devices
+
+하이퍼바이저
+- 타입 1 (native 또는 bare-metal)
+- 타입 2 (hosted)
+- https://ko.wikipedia.org/wiki/%ED%95%98%EC%9D%B4%ED%8D%BC%EB%B0%94%EC%9D%B4%EC%A0%80
+
+가상화 종류
+- Full virtualization
+- Para-virtualization : Guest OS 생략?
+- OS level virtualization : HyperVisor 생략?
+
+가상화 이점
+- Scalability (확장성) / Flexibility (유연성)
+- H/W cost saving
+- Energy saving
+- Faster and safer backup
+- Centralized monitoring
+
+가상화 단점
+- I/O속도 저하
+
+*(Internet) Cloud  Computing
+NIST - cloud computing definition (표준)
+- https://csrc.nist.gov/publications/detail/sp/800-145/final
+- https://www.whatap.io/blog/29/
+
+클라우드 컴퓨팅 특징
+- On-demand self-service
+- Broad (or Ubiquitous) network access
+- Resource pooling
+- Rapid elasticity
+- Measured service
+
+서비스 모델
+- Infrastructure as a Service (IaaS) - ex) OpenStack
+- Platform as a Service (PaaS) - ex) Azure
+- Software as a Service (SaaS) - ex) gmail, facebook
+
+Linux namespaces
+1) PID (Process ID)
+- Always have Parent PID
+- Each namespaces have different PID numbers
+2) NET
+- IP (Mac) Address
+- isolated the NIC(Network Interface Controller - pshical/virtual)
+3) UTS (Unix Time Sharing System)
+- Host name
+4) mnt (Mount)
+- File system
+- chroot
+5) IPC (protocol, media)
+- Process communication
+6) UID
+7) cgroup (scheduling)
+- Control Group
+- Linux Kernel Feature
+- Resource Manager 
+
+LXC(Linux Container)
+- OS-level virtualization
+- multiple isolated Linux systems on a single host
+- https://en.wikipedia.org/wiki/LXC
+
+https://en.wikipedia.org/wiki/Docker_(software)
+Docker & LXC
+- LXC support (early versions < Docker ver1.10)
+- 컨테이너 배치 자동화 기술
+- LXC : OS containers / Docker : App contaioners
+
+UnionFS
+- Union File System
+- image layered system
+- The different branches may be either read‐only or read-write file systems
+- https://en.wikipedia.org/wiki/UnionFS
+
+AUFS
+- Another UnionFS
+- short for advanced multi‐layered unification filesystem
+
+OverlayFS
+- union mount filesystem implementation for Linux
+- version : overlay2
+- https://docs.docker.com/storage/storagedriver/select-storage-driver/
+
+*Docker (Golang study)
+- Docker Inc., the company
+- Docker the container runtime and orchestration technology
+- Docker the open source project (now called Moby)
+
+Container OS'es
+https://blog.codeship.com/container-os-comparison/
+>> CoreOs, appc, rkt, and OCI(runc)
+
+Docker Architecture
+- Docker client - host와 socket 통신 (/var/run/docker.sock)
+- Docker Server(Host) - Containers, images
+- Registries (public - Docker hub(docker.io))
+- hub.docker.com
+
+image
+- 구분 : Hash code (SHA) 
+- 실행 명령 : docker client
+- 실행 위치 : docker host
+- 저장 위치 : /var/lib/docker (permission : su)
+
+Architecture
+- Monolithic architecture : update & manage 힘듬
+- Microservice architecture
+- https://futurecreator.github.io/2018/09/14/what-is-microservices-architecture/
+
+Kubernetes
+- Container Orchestrator
+- CRI (Container Runtime* Interface)
+- multi-Node
+- containerd (dockerd)
+- https://en.wikipedia.org/wiki/Kubernetes
+
+DCOS
+- Datacenter OS
+
+Orchestration
+- master
+    - decision, schedule, monitor
+    - control plane
+- node (a.k.a workers)
+    - Kubelet
+    - Containerd
+- deployment
+    - docker
+    - define JSON, YAML(예믈) manifest file
+
+Master services 
+- API server : front-end(fe)
+    - post manifest files
+    - the brains of the cluster
+- Cluster store : key-value data
+    - store the configuration and state of the cluster
+    - the memories of the cluster
+    - only stateful
+    - based on etcd : needs to be protected
+- Controller manager
+    - controller of controllers
+    - match the desired state
+- Scheduler
+- (NOT to run application workloads on the master)
+
+Nodes
+- Kubelet
+- Container runtime (Docker etc)
+- Kube-proxy (CNI, Container Network Interface)
+
+Declarative Model & Desired State
+1. declate desired state  >> mafifest file
+2. post API server (kubectl)
+3. store in cluster store
+4. schedule(scheduler : node), deploy, build container(kubelet)
+5. current state vary >> fix
+
+Declarative Model
+- simple
+- self-healing, scaling, conrol, documentation, etc
+- adapt to both failures(current state) and changes (desired state)
+- vs Imperative Model
+
+Pods
+- scheduling unit (ex. vm, container)
+- level : VM > Pods > Container
+- Pod Anatomy : all container share namespace
+- scaling : by add or remove pod (not by container in pod) 
+- multi-container Pods : tightly coupled containers
+    - A web server + a file synchronizer
+    - Shared volume, same node
+    - Shared operating environment
+- tightly coupled container : share same pod
+- loosely coupled container : share same network
+- manifest file : YAML, JSON
+- A pod in containers
+    - Network : same IP address, other port range...
+- containers in each other pods
+    - Pod Network : other IP address, can have same port...
+- cgroup : limit help container's resource usage
+- lifecycle : pending >> running >> succeeded/failed(not rescheduled)
+- mortal : born, live, die
+
+Pod theory summary
+- Smallest/atomic unit of scheduling
+- Have one of more containers
+- Scheduled on nodes
+- Declarative via maifest files
+
+ReplicaSets(rs) : number of desired state
+Deployments : top of ReplicaSets (update, rollback)
+Services
+- metadata
+- provide stable dns, ip address
+- connect pods to services : label
+
+YAML : YAML Ain't Markup Language
+- sequence of scalars (syntax : dash(-) + space)
+- key: value (syntax : colon(:) + space)
+- etc (space, enter 조합)
+- https://yaml.org/spec/1.2/spec.html#id2759963
