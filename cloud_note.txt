@@ -83,7 +83,7 @@ OverlayFS
 - version : overlay2
 - https://docs.docker.com/storage/storagedriver/select-storage-driver/
 
-*Docker (Golang study)
+Docker
 - Docker Inc., the company
 - Docker the container runtime and orchestration technology
 - Docker the open source project (now called Moby)
@@ -189,15 +189,29 @@ Pod theory summary
 - Scheduled on nodes
 - Declarative via maifest files
 
-ReplicaSets(rs) : number of desired state
-Deployments : top of ReplicaSets (update, rollback)
-Services
-- metadata
-- provide stable dns, ip address
-- connect pods to services : label
+ReplicaSets(rs)
+- 1:1 relationship between a rs and a pod
+- number of desired state to deploy
+- the pod template
+- 4 Top level
+    - apiVersion
+    - kind
+    - metadata
+    - spec
+- label : connect, call, control pod
+- loosley coupled
 
-YAML : YAML Ain't Markup Language
-- sequence of scalars (syntax : dash(-) + space)
-- key: value (syntax : colon(:) + space)
-- etc (space, enter 조합)
-- https://yaml.org/spec/1.2/spec.html#id2759963
+K8s keyword
+- Desired state
+- Current stae (Actual state)
+- Declarative model (many) vs. Imperaitve model (fast)
+
+Services
+- Pod IP : unreliable
+- get own stable dns, ip, port
+- connect pods to services : label selector
+- provide : stable networking, load-balancing
+
+Deployments
+- top of ReplicaSets
+- rolling updates and simple rollback
